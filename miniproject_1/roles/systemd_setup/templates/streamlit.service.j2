@@ -1,0 +1,17 @@
+[Unit]
+Description=Streamlit App
+After=network.target
+
+[Service]
+User={{ app_user }}
+WorkingDirectory={{ app_home }}
+ExecStart={{ venv_path }}/bin/streamlit run {{ app_script }}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+[server]
+port = 8501
+enableCORS = false
+headless = true

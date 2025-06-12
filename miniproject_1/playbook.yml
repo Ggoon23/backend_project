@@ -1,0 +1,19 @@
+---
+- name: Deploy Streamlit App
+  hosts: streamlit_servers
+  become: true  # sudo 사용
+  vars:
+    app_user: student
+    app_home: /home/student/miniproject_1/app
+    app_script: app.py  # 스트림릿 앱 진입 파일
+    streamlit_port: 8501
+    server_name: yourdomain.com
+    apache_conf_filename: myvirtual_host.conf
+    venv_path: /home/student/miniproject_1/venv
+    streamlit_username : "admin"
+    streamlit_password : "pass123"
+
+  roles:
+    - streamlit_setup
+    - apache_setup
+    - systemd_setup

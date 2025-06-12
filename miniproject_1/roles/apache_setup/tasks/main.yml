@@ -1,0 +1,23 @@
+- name: Install Apache2
+  apt:
+    name: apache2
+    state: present
+    update_cache: yes
+
+- name: Ensure Apache sites-available directory exists
+  file:
+    path: /etc/apache2/sites-available
+    state: directory
+
+- name: Copy Apache virtual host config
+  template:
+    src: myvirtual_host.conf.j2
+    dest: /etc/apache2/sites-available/myvirtual_host.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable site
+  command: a2ensite myvirtual_host.conf
+  notify: Reload apache
+

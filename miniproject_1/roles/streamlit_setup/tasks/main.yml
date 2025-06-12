@@ -1,0 +1,46 @@
+- name: Create .streamlit directory
+  file:
+    path: "{{ app_home }}/.streamlit"
+    state: directory
+    mode: '0755'
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+
+- name: Copy config.toml
+  template:
+    src: config.toml.j2
+    dest: "{{ app_home }}/.streamlit/config.toml"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0644'
+
+- name: Copy secrets.toml
+  template:
+    src: secrets.toml.j2
+    dest: "{{ app_home }}/.streamlit/secrets.toml"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0600'
+
+- name: Install python3-venv package
+  apt:
+    name: python3-venv
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Create Python virtual environment
+  command: python3 -m venv {{ venv_path }}
+  args:
+    creates: "{{ venv_path }}/bin/activate"
+
+- name: Copy requirements.txt
+  copy:
+    src: requirements.txt
+    dest: "{{ app_home }}/requirements.txt"
+
+- name: Install required Python packages
+  pip:
+    requirements: "{{ app_home }}/requirements.txt"
+    virtualenv: "{{ venv_path }}"
+    virtualenv_command: python3 -m venv
